@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#canvas{
+				width: 400px;
+				height: 400px;
+				border: solid 1px red;
+				margin: 50px auto;
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas" width="400" height="400"></canvas>
+		<script type="text/javascript">
+			// 获取画布
+			var canvas = document.querySelector("#canvas");
+			// 获取绘图上下文  画笔
+			var ctx = canvas.getContext("2d");
+			// 改变坐标原点
+			ctx.translate(200,200);
+			
+			//线帽
+			ctx.lineCap = 'round';
+			
+			//文字
+			ctx.font = "bold 14px '微软雅黑'";
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+		
+		
+			function drawClock(){
+					// 绘制一个表盘
+			ctx.beginPath();
+			ctx.arc(0,0,180,0,Math.PI*2);
+			ctx.strokeStyle = 'black';
+			ctx.lineWidth = 4;
+			ctx.stroke();
+			
+			// 绘制一个刻度
+			for (i = 0; i<60; i++) {
+				var x = Math.cos(6*i*Math.PI/180)*170;
+				var y = Math.sin(6*i*Math.PI/180)*170;
+				var mun = (i/5+3)%12==0?12:(i/5+3)%12;
+				ctx.beginPath();
+				
+				if(i%5==0){
+					x = Math.cos(6*i*Math.PI/180)*168;
+				    y = Math.sin(6*i*Math.PI/180)*168;
+				    ctx.fillStyle = "red";
+					ctx.fillText(mun,x,y);
+				}else{
+					ctx.fillStyle = "black";
+					ctx.arc(x,y,2,0,Math.PI*2);
+					ctx.fill();
+				}
+				
+			}
+		
+			// 绘制时分秒指针。
+			var now = new Date;
+			var h = now.getHours();
+			var m = now.getMinutes();
+			var s = now.getSeconds();
+			
+			//年、月、日
+			var nian = now.getFullYear();
+			var yue = now.getMonth()+1;
+			var ri = now.getDate();
+			var xing = now.getDay();
+			
+			//年、月、日   显示方框
+			ctx.beginPath();
+			ctx.strokeRect(-80,50,160,60);
+			ctx.lineWidth = 2;
+//			ctx.fillStyle = 'red';
+			ctx.stroke();
+			ctx.closePath();
+			
+			//年、月、日、星期
+			var weak = ['日','一','二','三','四','五','六'];
+			var rili = nian + '年' + (yue<10?'0' + yue:yue) + '月' + (ri<10?"0"+ri:ri) + '日';
+			var xingqi = '星期' + '   ' + weak[xing];
+			ctx.fillText(rili,0,68);
+			ctx.fillText(xingqi,0,92);
+
+			//时针
+			ctx.save();
+			ctx.rotate((h*30+30/60*m)/180*Math.PI);
+			ctx.beginPath();
+			ctx.lineTo(0,-110);
+			ctx.lineTo(0,20);
+			ctx.lineWidth = 6;
+			ctx.strokeStyle = 'black';
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+			
+			//分针
+			ctx.save();
+			ctx.rotate((m*6+6/60*s)/180*Math.PI);
+			ctx.beginPath();
+			ctx.lineTo(0,-130);
+			ctx.lineTo(0,30);
+			ctx.lineWidth = 4;
+			ctx.strokeStyle = 'black';
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+			
+			//秒针
+			ctx.save();
+			ctx.rotate(s*6/180*Math.PI);
+			ctx.beginPath();
+			ctx.lineTo(0,-150);
+			ctx.lineTo(0,40);
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = 'red';
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+			
+			//圆点
+			ctx.beginPath();
+			ctx.arc(0,0,10,0,Math.PI*2);
+			ctx.fill();
+			ctx.closePath();
+			
+			
+			}
+				drawClock();
+			
+			
+			/// 动起来
+			var t = setInterval(function(){
+				// 清空
+				ctx.clearRect(-200,-200,400,400);
+				
+				//  重绘    表盘+刻度+时钟+分针+秒针+圆点
+				drawClock();
+				
+			},1000);
+			
+				
+			
+
+
+			
+			
+		</script>
+	</body>
+</html>
